@@ -29,14 +29,13 @@ namespace OdeToFood.Controllers
             return Json(model);
         }
 
-        public IActionResult Index(string search = null)
+        public IActionResult Index(string search = null, int page = 1)
         {
             var model = _context.Restaurants
                 .OrderByDescending(
                 r => r.Reviews.Average(review => review.Rating)
                 )
-                .Where(r => r.Name.Contains(search) || search == null)
-                .Take(10)
+                .Where(r => search == null || r.Name.Contains(search))
                 .Select(r => new RestaurantListViewModel
                 {
                     Id = r.Id,
@@ -44,7 +43,8 @@ namespace OdeToFood.Controllers
                     City = r.City,
                     Country = r.Country,
                     CountOfReviews = r.Reviews.Count()
-            });
+                }).Take(10);
+                // topagedlist doesn't exist in net 6
 
             //if (Request.IsAjaxRequest())
             //{
