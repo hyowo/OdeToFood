@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdeToFood.filter;
+using OdeToFood.Filter;
 
 namespace OdeToFood.Controllers
 {

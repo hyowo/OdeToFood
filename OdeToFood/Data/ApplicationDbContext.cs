@@ -9,5 +9,6 @@ namespace OdeToFood.Data
             : base(options)
         {
         }
+        public DbSet<OdeToFood.Models.RestaurantReview> RestaurantReview { get; set; }
     }
 }
