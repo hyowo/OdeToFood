@@ -1,8 +1,19 @@
-﻿@{
+﻿@model IEnumerable<RestaurantListViewModel>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<form method="get" action ="@Url.Action("Index")" data-otf-ajax="true" data-otf-target="#restaurantList">
+    <input type="search" name="searchTerm" data-otf-autocomplete="@Url.Action("Autocomplete")" />
+    <input type="submit" name="Search By Name" />
+</form>
+
+@foreach (var item in Model)
+{
+<div>
+    <h4>@item.Name</h4>
+    <div>@item.City, @item.Country</div>
+    <div>Number of reviews : @item.CountOfReviews</div>
+    <hr />
 </div>
+}

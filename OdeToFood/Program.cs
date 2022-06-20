@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OdeToFood.Data;
+using OdeToFood.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<UserProfile, AppRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultUI()
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -28,6 +32,8 @@ else
     app.UseHsts();
 }
 
+SetupAppData(app, app.Environment);
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -36,9 +42,49 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+    "Cuisine", "cuisine/{name}",
+    new { controller = "Cuisine", action = "Search", name = "" });
+
+    endpoints.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+}
+);
+
 app.MapRazorPages();
 
 app.Run();
+
+void SetupAppData(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    using var userManager = serviceScope.ServiceProvider.GetService<UserManager<UserProfile>>();
+    using var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<AppRole>>();    
+    using var context = serviceScope
+        .ServiceProvider
+        .GetService<ApplicationDbContext>();
+    if (context == null)
+    {
+        throw new ApplicationException("Problem in services. Can not initialize ApplicationDbContext");
+    }
+    while (true)
+    {
+        try
+        {
+            context.Database.OpenConnection();
+            context.Database.CloseConnection();
+            break;
+        }
+        catch (SqlException e)
+        {
+            if (e.Message.Contains("The login failed.")) { break; }
+            Thread.Sleep(1000);
+        }
+    }
+    AppDataInit.SeedIdentity(userManager, roleManager);
+    AppDataInit.SeedRestaurant(context);
+
+}
