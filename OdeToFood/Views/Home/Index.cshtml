@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Restaurant>
+﻿@model IEnumerable<RestaurantListViewModel>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -8,6 +8,7 @@
 <div>
     <h4>@item.Name</h4>
     <div>@item.City, @item.Country</div>
+    <div>Number of reviews : @item.CountOfReviews</div>
     <hr />
 </div>
 }
