@@ -1,19 +1,13 @@
-﻿@model IEnumerable<RestaurantListViewModel>
+﻿@using X.PagedList
+@model IPagedList<RestaurantListViewModel>
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<form method="get" action ="@Url.Action("Index")" data-otf-ajax="true" data-otf-target="#restaurantList">
-    <input type="search" name="searchTerm" data-otf-autocomplete="@Url.Action("Autocomplete")" />
-    <input type="submit" name="Search By Name" />
+<form method="get" action ="@Url.Action("Index")"
+      data-otf-ajax="true" data-otf-target="#restaurantList">
+        <input type="search" name="searchTerm" data-otf-autocomplete="@Url.Action("Autocomplete")" />
+        <input type="submit" name="Search By Name" />
 </form>
 
-@foreach (var item in Model)
-{
-<div>
-    <h4>@item.Name</h4>
-    <div>@item.City, @item.Country</div>
-    <div>Number of reviews : @item.CountOfReviews</div>
-    <hr />
-</div>
-}
+<partial name="_restaurant" model="Model" />

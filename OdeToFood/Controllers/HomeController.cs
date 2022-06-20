@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AspNetCore.Unobtrusive.Ajax;
 using Microsoft.AspNetCore.Mvc;
 using OdeToFood.Data;
 using OdeToFood.Models;
 using System.Diagnostics;
+using X.PagedList;
 
 namespace OdeToFood.Controllers
 {
@@ -29,13 +30,14 @@ namespace OdeToFood.Controllers
             return Json(model);
         }
 
-        public IActionResult Index(string search = null, int page = 1)
+        public IActionResult Index(string? searchTerm = null, int page = 1)
         {
             var model = _context.Restaurants
                 .OrderByDescending(
                 r => r.Reviews.Average(review => review.Rating)
                 )
-                .Where(r => search == null || r.Name.Contains(search))
+                .Where(r => searchTerm == null || r.Name.Contains(searchTerm))
+
                 .Select(r => new RestaurantListViewModel
                 {
                     Id = r.Id,
@@ -43,14 +45,13 @@ namespace OdeToFood.Controllers
                     City = r.City,
                     Country = r.Country,
                     CountOfReviews = r.Reviews.Count()
-                }).Take(10);
-                // topagedlist doesn't exist in net 6
+                }).ToPagedList(page, 10);
 
-            //if (Request.IsAjaxRequest())
-            //{
-            //    return PartialView("_Restaurants", model);
-            //}
-            // ajax wont download
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Restaurants", model);
+            }
+
             return View(model);
         }
 
@@ -58,7 +59,6 @@ namespace OdeToFood.Controllers
         {
             return View();
         }
-
         public IActionResult About()
         {
             var model = new AboutModel()
@@ -75,5 +75,6 @@ namespace OdeToFood.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

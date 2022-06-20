@@ -13,9 +13,9 @@ namespace OdeToFood.Data
         {
             if (!context.Restaurants.Any())
             {
-                for (int i = 1; i < 1000; i++)
+                for (int i = 1; i < 10; i++)
                 {
-                    _ = context.Restaurants.Add(
+                    context.Restaurants.Add(
                        new Restaurant
                        {
                            Name = $"Cinnamon Club{i}",
@@ -25,7 +25,8 @@ namespace OdeToFood.Data
                             new RestaurantReview()
                             {
                                 Rating=10,
-                                Body = "Superlahe!"
+                                Body = "Hea",
+                                ReviewerName = "Jaanus"
                             }
                             }
                        });

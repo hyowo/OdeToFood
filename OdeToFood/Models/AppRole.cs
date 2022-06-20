@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OdeToFood.Models
 {
-    public class AppRole : IdentityRole
+    public class AppRole:IdentityRole
     {
     }
 }
