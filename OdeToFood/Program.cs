@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OdeToFood.Data;
 
@@ -28,6 +29,8 @@ else
     app.UseHsts();
 }
 
+SetupAppData(app, app.Environment);
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -51,3 +54,31 @@ app.UseEndpoints(endpoints =>
 app.MapRazorPages();
 
 app.Run();
+
+void SetupAppData(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    using var context = serviceScope
+        .ServiceProvider
+        .GetService<ApplicationDbContext>();
+    if (context == null)
+    {
+        throw new ApplicationException("Problem in services. Can not initialize ApplicationDbContext");
+    }
+    while (true)
+    {
+        try
+        {
+            context.Database.OpenConnection();
+            context.Database.CloseConnection();
+            break;
+        }
+        catch (SqlException e)
+        {
+            if (e.Message.Contains("The login failed.")) { break; }
+            Thread.Sleep(1000);
+        }
+    }
+    AppDataInit.SeedRestaurant(context);
+
+}

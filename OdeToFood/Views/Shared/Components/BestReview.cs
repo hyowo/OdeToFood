@@ -14,8 +14,9 @@ namespace OdeToFood.Components
 		private List<RestaurantReview> _reviews;
 		public BestReview()
 		{
-			_reviews = Controllers.ReviewsController._reviews;
+			//_reviews = Controllers.ReviewsController._reviews;
 		}
+        
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
 			var best = _reviews.OrderByDescending(r => r.Rating).First();
