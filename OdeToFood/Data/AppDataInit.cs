@@ -1,4 +1,5 @@
-﻿using OdeToFood.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using OdeToFood.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,23 @@ namespace OdeToFood.Data
                         });
                 }
                 context.SaveChanges();
+            }
+        }
+
+        public static void SeedIdentity(UserManager<UserProfile>? userManager, RoleManager<AppRole>? roleManager)
+        {
+            var role = new AppRole();
+            role.Name = "Admin";
+            if (!roleManager.RoleExistsAsync("Admin").Result)
+            {
+                var result = roleManager.CreateAsync(role).Result;
+                if (!result.Succeeded)
+                {
+                    foreach (var idenityError in result.Errors)
+                    {
+                        Console.WriteLine($"Can not create role! Error: {idenityError.Description}");
+                    }
+                }
             }
         }
     }
