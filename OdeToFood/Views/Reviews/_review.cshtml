@@ -1,10 +1,32 @@
-﻿@model OdeToFood.Models.RestaurantReview
-
-<div class="review">
-    @*<h4>@Model.Name</h4>*@
-    <span>@Model.Rating</span>
-    @*<p>@Model.City, @Model.Country</p>*@
-    <span class="right">
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
-    </span>
-</div>
+﻿@model IEnumerable<OdeToFood.Models.RestaurantReview>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Body)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Body)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
