@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using OdeToFood.filter;
 
 namespace OdeToFood.Controllers
 {
+    [Log]
     public class CuisineController : Controller
     {
         [HttpPost]
