@@ -16,12 +16,13 @@ namespace OdeToFood.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string search = null)
         {
             var model = _context.Restaurants
                 .OrderByDescending(
                 r => r.Reviews.Average(review => review.Rating)
                 )
+                .Where(r => r.Name.Contains(search) || search == null)
                 .Take(10)
                 .Select(r => new RestaurantListViewModel
                 {
